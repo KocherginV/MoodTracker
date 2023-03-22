@@ -28,7 +28,7 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ handleSelectMood }) => {
       <Text style={styles.headingText}>How are you right now?</Text>
       <View style={styles.moodOptions}>
         {moodOptions.map(option => (
-          <View>
+          <View key={option.emoji}>
             <Pressable
               onPress={() => setSelectedMood(option)}
               key={option.emoji}
