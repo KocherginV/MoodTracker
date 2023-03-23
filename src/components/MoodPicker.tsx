@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 10,
     paddingVertical: 20,
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   headingText: {
     textAlign: 'center',
@@ -86,6 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     letterSpacing: 1,
     marginBottom: 15,
+    color: theme.colorWhite,
   },
   moodOptions: {
     flexDirection: 'row',
