@@ -83,11 +83,11 @@ const styles = StyleSheet.create({
   },
   headingText: {
     textAlign: 'center',
-    fontWeight: 'bold',
     fontSize: 20,
     letterSpacing: 1,
     marginBottom: 15,
     color: theme.colorWhite,
+    fontFamily: theme.fontFamilyBold,
   },
   moodOptions: {
     flexDirection: 'row',
