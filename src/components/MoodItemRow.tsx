@@ -10,7 +10,10 @@ import format from 'date-fns/format';
 import { MoodOptionWithTimestamp } from '../types';
 import { theme } from '../theme';
 import { useAppContext } from '../App.provider';
-import { PanGestureHandler } from 'react-native-gesture-handler';
+import {
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+} from 'react-native-gesture-handler';
 import Reanimated, {
   useAnimatedGestureHandler,
   useSharedValue,
@@ -19,55 +22,65 @@ import Reanimated, {
   runOnJS,
 } from 'react-native-reanimated';
 
-const maxSwipe = 80;
-
 type MoodItemRowProps = {
   item: MoodOptionWithTimestamp;
 };
 
+const maxPan = 10;
+
 export const MoodItemRow: React.FC<MoodItemRowProps> = ({ item }) => {
   const appContext = useAppContext();
-  const translateX = useSharedValue(0);
+  const offset = useSharedValue(0);
+
   const handleDelete = React.useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     appContext.handleDeleteMood(item);
   }, [appContext, item]);
 
-  const deleteWithDelay = React.useCallback(() => {
-    setTimeout(() => {
-      handleDelete;
-    }, 500);
-  }, [handleDelete]);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: offset.value }],
+  }));
 
-  const onGestureEvent = useAnimatedGestureHandler(
+  const removeWithDelay = React.useCallback(() => {
+    setTimeout(() => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      appContext.handleDeleteMood(item);
+    }, 250);
+  }, [appContext, item]);
+
+  const onGestureEvent = useAnimatedGestureHandler<
+    PanGestureHandlerGestureEvent,
+    { shouldRemove: boolean }
+  >(
     {
-      onActive: event => {
-        translateX.value = event.translationX;
-      },
-      onEnd: event => {
-        if (Math.abs(event.translationX) > maxSwipe) {
-          translateX.value = withTiming(1000 * Math.sign(event.translationX));
-          runOnJS(deleteWithDelay);
+      onActive: (event, ctx) => {
+        const xVal = Math.floor(event.translationX);
+        offset.value = xVal;
+        if (xVal <= maxPan) {
+          ctx.shouldRemove = true;
         } else {
-          translateX.value = withTiming(0);
+          ctx.shouldRemove = false;
+        }
+        console.warn(xVal);
+        console.warn(ctx.shouldRemove);
+      },
+      onEnd: (_, ctx) => {
+        if (ctx.shouldRemove) {
+          offset.value = withTiming(Math.sign(offset.value) * 2000);
+          runOnJS(removeWithDelay)();
+        } else {
+          offset.value = withTiming(0);
         }
       },
     },
     [],
   );
-
-  const cardStyle = useAnimatedStyle(
-    () => ({
-      transform: [{ translateX: translateX.value }],
-    }),
-    [],
-  );
   return (
     <PanGestureHandler
-      minDeltaX={1}
-      minDeltaY={100}
+      activeOffsetX={[-5, 50]}
+      activeOffsetY={[-100, 100]}
       onGestureEvent={onGestureEvent}>
-      <Reanimated.View style={[styles.moodItem, cardStyle]}>
+      <Reanimated.View style={[styles.moodItem, animatedStyle]}>
         <View style={styles.iconAndDescription}>
           <Text style={styles.moodValue}>{item.mood.emoji}</Text>
           <Text style={styles.moodDescription}>{item.mood.description}</Text>
