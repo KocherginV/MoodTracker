@@ -26,7 +26,7 @@ type MoodItemRowProps = {
   item: MoodOptionWithTimestamp;
 };
 
-const maxPan = 10;
+const maxPan = 80;
 
 export const MoodItemRow: React.FC<MoodItemRowProps> = ({ item }) => {
   const appContext = useAppContext();
@@ -54,15 +54,13 @@ export const MoodItemRow: React.FC<MoodItemRowProps> = ({ item }) => {
   >(
     {
       onActive: (event, ctx) => {
-        const xVal = Math.floor(event.translationX);
+        const xVal = event.translationX;
         offset.value = xVal;
-        if (xVal <= maxPan) {
+        if (xVal <= maxPan && xVal < 0) {
           ctx.shouldRemove = true;
         } else {
           ctx.shouldRemove = false;
         }
-        console.warn(xVal);
-        console.warn(ctx.shouldRemove);
       },
       onEnd: (_, ctx) => {
         if (ctx.shouldRemove) {
@@ -77,7 +75,7 @@ export const MoodItemRow: React.FC<MoodItemRowProps> = ({ item }) => {
   );
   return (
     <PanGestureHandler
-      activeOffsetX={[-5, 50]}
+      activeOffsetX={[-1, 1]}
       activeOffsetY={[-100, 100]}
       onGestureEvent={onGestureEvent}>
       <Reanimated.View style={[styles.moodItem, animatedStyle]}>
