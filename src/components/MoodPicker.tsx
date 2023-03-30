@@ -6,6 +6,7 @@ import Reanimated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
+import ReactNativeFeedback from 'react-native-haptic-feedback';
 
 const ReanimatedPressable = Reanimated.createAnimatedComponent(Pressable);
 
@@ -39,6 +40,7 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ handleSelectMood }) => {
       handleSelectMood(selectedMood);
       setSelectedMood(undefined);
       setHasSelected(true);
+      ReactNativeFeedback.trigger('impactHeavy');
     }
   }, [handleSelectMood, selectedMood]);
 

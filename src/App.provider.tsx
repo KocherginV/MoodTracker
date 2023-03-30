@@ -1,6 +1,7 @@
 import React from 'react';
 import { MoodOptionType, MoodOptionWithTimestamp } from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ReactNativeFeedback from 'react-native-haptic-feedback';
 
 type AppData = {
   moodList: MoodOptionWithTimestamp[];
@@ -61,6 +62,7 @@ export const AppProvider: React.FC = ({ children }) => {
           return value.timestamp !== mood.timestamp;
         });
         setAppData({ moodList: newMoodList });
+        ReactNativeFeedback.trigger('impactLight');
         return newMoodList;
       });
     },
