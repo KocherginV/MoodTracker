@@ -81,10 +81,10 @@ export const MoodItemRow: React.FC<MoodItemRowProps> = ({ item }) => {
       <Reanimated.View style={[styles.moodItem, animatedStyle]}>
         <View style={styles.iconAndDescription}>
           <Text style={styles.moodValue}>{item.mood.emoji}</Text>
-          <Text style={styles.moodDescription}>{item.mood.description}</Text>
+          <Text style={styles.moodDescription}>{item.mood.description} </Text>
         </View>
         <Text style={styles.moodDate}>
-          {format(new Date(item.timestamp), "dd MMM, yyyy 'at' h:mmaaa")}
+          {format(new Date(item.timestamp), 'dd MMM, yy, h:mmaaa')}
         </Text>
         <Pressable onPress={handleDelete}>
           <Text style={styles.deleteText}>Delete</Text>
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   moodDate: {
     textAlign: 'center',
     color: theme.colorLavender,
+    paddingRight: 10,
   },
   moodItem: {
     backgroundColor: 'white',
